@@ -1,0 +1,55 @@
+can do healthcare or finance like will a loan be paid back 
+https://physionet.org/content/mimiciii/1.4/
+https://archive.ics.uci.edu/dataset/45/heart+disease
+https://www.openintro.org/data/index.php?data=loans_full_schema
+
+
+from tqdm import tqdm  # For progress indication
+
+def gridsearchrf():
+    param_grid = {
+        'n_estimators': [50, 100, 200],  # Number of trees in the forest
+        'max_depth': [None, 10, 20, 30],  # Maximum depth of the tree
+        'min_samples_split': [2, 5, 10],  # Minimum number of samples required to split an internal node
+        'min_samples_leaf': [1, 2, 4],    # Minimum number of samples required to be at a leaf node
+        'max_features': ['auto', 'sqrt']   # Number of features to consider when looking for the best split
+    }
+    # n_estimators represents the number of decision trees in the forest, higher number of trees improves performance but increases computational cost 
+    # max_depth is how far eacch tree is able to go within the 'forest' 
+    # deeper trees can capture more complex data but risks overfitting, value of none means each tree will grow until only one class in each leaf node 
+    # min_samples_split is the min number of samples required to split each node, higher values prevent tress from growing too complex and help control overfitting 
+    # by forcing nodes to have more samples before they split 
+    # min_samples_leaf is the minimum  number of samples required to be in a leaf node, setting higher values can reduce overfitting by keeping the leaves broader 
+    # and reauiring each leaf to contain a min amount of data 
+    # max_features is the number of features to consdier when looking for the best split at each node
+    # auto means the model uses the square root of the number of features while sqrt is similar but more optemised for speed in some implementations
+    #rf_model = RandomForestClassifier(n_estimators=10, max_depth=5, random_state=42)
+    rf_model = RandomForestClassifier()
+    grid_search = GridSearchCV(estimator=rf_model, param_grid=param_grid, 
+                            scoring='accuracy', cv=3, n_jobs=-1, verbose=1)
+    # Fit GridSearchCV
+    grid_search.fit(X_train, y_train)
+    # grid search evaluates every combination from the param_grid
+    # uses cross validation to score each combination 
+    # selects best performing model
+
+    # Get the best parameters and model
+    best_params = grid_search.best_params_  # Retrieve the best parameters
+    best_model = grid_search.best_estimator_
+    print("Best Hyperparameters:", best_params)
+    best_model.fit(X_train, y_train)
+    # Initialize and train the Random Forest model
+    # used for classification and regression tasks
+    # constructs multiple trees during traning and outputting the mode ( for classification ) or mean ( for regression ) of the individual trees
+    print("Best Hyperparameters:", best_params)
+    best_model.fit(X_train, y_train)
+    y_pred = best_model.predict(X_test)
+    # Predict using the best model
+
+    model_name = "Random Forest with Grid Search"
+    accuracy_gs = accuracy_score(y_test, y_pred)  # Calculate accuracy
+    y_test_gs = y_test  # Retain the true labels
+    y_pred_gs = y_pred  # Retain the predicted labels
+    return y_test_gs, y_pred_gs, accuracy_gs, model_name
+    # Export results for evaluation
+y_test_gs, y_pred_gs, accuracy_gs, model_name = main()
