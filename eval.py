@@ -1,6 +1,7 @@
-from imports import *
-
-def main(model_name, y_test, y_pred, accuracy, feature_importances=None, feature_names=None):
+from sklearn.metrics import confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
+def main(model_name, y_test, y_pred, accuracy):
     # evaluate a models performance 
     # model attributes are passed in from file 
     # goal is to reduce amount of code which is re used in multiple files
