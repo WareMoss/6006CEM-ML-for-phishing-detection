@@ -1,22 +1,28 @@
-from imports import *
 
+import os
+import pandas as pd
 def main():
     df = pd.read_csv('PhiUSIIL_Phishing_URL_Dataset.csv', header=0, low_memory=False)
-    df['HTTPS'] = df['URL'].apply(lambda x: 'https' if str(x).lower().startswith('https') else 'http')
-    # apply is a pandas method that applys a function to each element in a series, used here to clean the data
-    # lambda function takes x as an input, which is the URL, as apply iterates over the values in the dataframe 
-    # str(x).lower() converts x to a string type and converts the string to lowercase, this allows the comparison to be case sensitive 
-    # startswith() checks if the URL starts with HTTPS and if not returns false giving a http otherwise its true and gives a https
-    # note: could have just changed it straight to 1 and 0 as its either https or http but to demonstrate my ability to use 
-    # one hot encoding I did this
-    categorical_columns = ['URL', 'Domain', 'TLD', 'Title', 'FILENAME']
-    df = df.drop(categorical_columns, axis=1)
-    # axis=1 means the whole column
-    # these are all the columns that contain catagorical data, they could be transfered into numerical values using one hot encoding
-    # I have done this but it took about 3000s to compile and run while giving the same answer
-    # so remove them
-    column_names = df.columns.tolist()
-    print(df.head())
-    print(column_names)
-    df.to_csv('PhiUSIIL_Phishing_URL_DatasetU.csv', index=False)
-    # Save the updated DataFrame back to the Excel file (or a new file)
+    if not os.path.exists(r'D:\Uni Work\6006CEM - Machine Learning and Related Applications\assessment\PhiUSIIL_Phishing_URL_DatasetU.csv'):
+       # check if this file exists, as it is the processed file 
+       # if the file doesnt exist process the original dataset
+       # if the file exists, skip the processing step saving time 
+        top_20_features = [
+        'URLSimilarityIndex', 'NoOfExternalRef', 'NoOfImage', 'LineOfCode', 'NoOfSelfRef',
+        'HasSocialNet', 'NoOfCSS', 'NoOfJS', 'HasCopyrightInfo',
+        'NoOfOtherSpecialCharsInURL', 'IsHTTPS', 'URLLength', 'HasDescription', 'NoOfDegitsInURL',
+        'NoOfLettersInURL', 'HasSubmitButton', 'URLTitleMatchScore', 'HasTitle', 'SpacialCharRatioInURL', 'TLD', 'label'
+        ]
+        # from previous runs I have determined that these are the top 20 most important features in the dataset, as well as label
+        dfclean = df[top_20_features]
+        if dfclean.isna().sum().sum() > 0:
+            print("NaN values detected in the dataset.")
+            dfclean = dfclean.dropna()
+            # drops nan rows as the dataset is 230k rows so a few rows wont be missed
+            print("NaN count per column:")
+            print(dfclean.isna().sum())
+        # store the most important features as a new dataset, trimming down unecessary columns
+        dfclean.to_csv('PhiUSIIL_Phishing_URL_DatasetU.csv', index=False)
+        # creates new CSV file for the new dataset columns
+if __name__ == "__main__":
+    main()
