@@ -1,57 +1,65 @@
-from imports import *
+from preprocessing import X_train, y_train, X_test, y_test
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.neighbors import KNeighborsClassifier
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def main():
-    # Ensure X_train and X_test are DataFrames
-    X_train_df = pd.DataFrame(X_train) if isinstance(X_train, pd.Series) else X_train
-    X_test_df = pd.DataFrame(X_test) if isinstance(X_test, pd.Series) else X_test
 
-    # Ensure y_train and y_test are 1D Series
-    y_train_1d = y_train.squeeze() if isinstance(y_train, pd.DataFrame) else y_train
-    y_test_1d = y_test.squeeze() if isinstance(y_test, pd.DataFrame) else y_test
+    X_train_df = pd.DataFrame(X_train)
+    X_test_df = pd.DataFrame(X_test)
+    y_train_1d = pd.Series(y_train.squeeze())
+    y_test_1d = pd.Series(y_test.squeeze())
+    # Convert X_train and X_test into DataFrames, and y_train and y_test into Series
+    # This ensures that we can work with the data using pandas for easier manipulation and scaling
 
-    # Scale the features
     scaler = StandardScaler()
     X_train_scaled = pd.DataFrame(scaler.fit_transform(X_train_df), columns=X_train_df.columns)
     X_test_scaled = pd.DataFrame(scaler.transform(X_test_df), columns=X_test_df.columns)
+    # Initialize StandardScaler for feature scaling
+    # Scaling the features ensures that all variables have the same scale, preventing any one feature from dominating
 
-    # Initialize KNN classifier
-    k = 5  # You can tune this hyperparameter
-    model = KNeighborsClassifier(n_neighbors=k)
+    model = KNeighborsClassifier(n_neighbors=5)
+    model.fit(X_train_scaled, y_train_1d) 
+    # Fit the model using the scaled training data
+    # Initialize the K-Nearest Neighbors model with 5 neighbors (k=5)
+    # KNN is sensitive to the choice of k, so this is a basic starting point
 
-    # Train the model
-    model.fit(X_train_scaled, y_train_1d)
-
-    # Evaluate the model
     train_score = model.score(X_train_scaled, y_train_1d)
     test_score = model.score(X_test_scaled, y_test_1d)
-
-    #print("Training score: {:.3f}".format(train_score))
-    #print("Test score: {:.3f}".format(test_score))
-
-    # Predictions
     y_pred = model.predict(X_test_scaled)
-
-    # Convert predictions and true labels to DataFrames for consistency
-    y_test_KNN = pd.DataFrame(y_test_1d, columns=["True_Label"])
-    y_pred_KNN = pd.DataFrame(y_pred, columns=["Predicted_Label"])
-
-    # Calculate accuracy
     accuracy_KNN = accuracy_score(y_test_1d, y_pred)
+    # Evaluate the model on both training and testing datasets
+    # Using the score() method to calculate accuracy for both training and test data
 
-    # Display results
-    #print(f"Accuracy of KNN: {accuracy_KNN:.3f}")
+    print(f"Training score: {train_score:.3f}")
+    print(f"Test score: {test_score:.3f}")
+    print(f"Accuracy of KNN: {accuracy_KNN:.3f}")
+    # Print the training and test scores, as well as the accuracy of the KNN model
     
-    # You can also print the confusion matrix and classification report if needed
-    #cm = confusion_matrix(y_test_1d, y_pred)
-    #sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-    #plt.title("Confusion Matrix for KNN")
-    #plt.xlabel("Predicted")
-    #plt.ylabel("True")
-    #plt.show()
+    k_values = range(1, 21)
+    train_accuracies = []
+    test_accuracies = []
+    for k in k_values:
+        model = KNeighborsClassifier(n_neighbors=k)
+        model.fit(X_train_scaled, y_train_1d)
+        train_accuracies.append(model.score(X_train_scaled, y_train_1d))
+        test_accuracies.append(model.score(X_test_scaled, y_test_1d))
+    # Hyperparameter tuning: Evaluating the performance of different k values
+    # Loop over a range of k values (1 to 20) and store the accuracies for both train and test datasets
 
-    # Return results for further processing or evaluation
-    model_name_KNN = "K-Nearest Neighbors"
-    return model_name_KNN, y_test_KNN, y_pred_KNN, accuracy_KNN
+    plt.figure(figsize=(8, 6))
+    plt.plot(k_values, train_accuracies, label="Train Accuracy", marker='o')  
+    plt.plot(k_values, test_accuracies, label="Test Accuracy", marker='o')  
+    plt.xlabel('Number of Neighbors (k)')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy vs Number of Neighbors (k) for KNN')
+    plt.legend()  
+    # Add legend to differentiate between train and test accuracy
+    plt.show() 
+    # Plot the accuracy for different k values to visually find the optimal k
 
-# Call the main function
+    return "K-Nearest Neighbors", y_test_1d, y_pred, accuracy_KNN
+
 model_name_KNN, y_test_KNN, y_pred_KNN, accuracy_KNN = main()
