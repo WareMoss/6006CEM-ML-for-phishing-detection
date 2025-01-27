@@ -35,3 +35,8 @@ def main():
     return model_name_LR, y_test, y_pred, accuracy_LR
 
 model_name_LR, y_test_LR, y_pred_LR, accuracy_LR = main()
+
+if __name__ == "__main__":
+    main()
+# https://youtu.be/U1omz0B9FTw?si=yHB2A5_SstA-CU3S
+# video used to explain LR machine learning model
