@@ -22,6 +22,9 @@ def main(model_name, y_test, y_pred, accuracy):
     plt.xlabel('Predicted')
     plt.title(f'Confusion Matrix for {model_name}')
     plt.show()
+    
+if __name__ == "__main__":
+    main()
     # Plot Confusion Matrix of the model being used
 
 
