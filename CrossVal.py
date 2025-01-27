@@ -39,3 +39,6 @@ def main():
     # Print the individual fold scores
 
 accuracy_rf = main()
+
+if __name__ == "__main__":
+    main()
