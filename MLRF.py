@@ -1,5 +1,5 @@
 from preprocessing import X_train, y_train, X_test, y_test
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
@@ -104,11 +104,11 @@ def main():
     # graph to visually show how important each feature is 
     return y_test_rf, y_pred_rf, accuracy_rf, model_name
 
-# Run the main function
 y_test_rf, y_pred_rf, accuracy_rf, model_name = main()
-#https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset
-# check how many are phishing and not and then try and equal them out 
-# so it selects them equally
-    # best params when ran with low amount of data:
-    # randomly select samples now just the same every time 
-    # do cross validation for test and training
+
+if __name__ == "__main__":
+    main()
+# https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset
+# dataset used
+# https://youtu.be/v6VJ2RO66Ag?si=f3WzuX3WBG2UBvQU
+# source for explaining the RF model
