@@ -1,6 +1,6 @@
 from preprocessing import X_train, y_train, X_test, y_test
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -63,3 +63,8 @@ def main():
     return "K-Nearest Neighbors", y_test_1d, y_pred, accuracy_KNN
 
 model_name_KNN, y_test_KNN, y_pred_KNN, accuracy_KNN = main()
+if __name__ == "__main__":
+    main()
+# sources:
+# https://youtu.be/0p0o5cmgLdE?si=sePB5H5U-Vvs6afX
+# used to explain the KNN model
