@@ -1,8 +1,8 @@
 import pandas as pd
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
 def main():
-    df = pd.read_csv('PhiUSIIL_Phishing_URL_DatasetU.csv', header=0, low_memory=False, nrows=10000)
+    df = pd.read_csv('PhiUSIIL_Phishing_URL_DatasetU.csv', header=0, low_memory=False) # nrows=5000 to show it works
     # reads in the cleaned dataset as df using pandas
     X = df.drop('label', axis=1)
     # Training dataset only contains the values we want to find a link between, label is the answer to if a site was phishing or not
@@ -34,7 +34,7 @@ def main():
         # saves the results into the cleaned csv file
     else:
         # if the data has already been encoded
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.70, random_state=42)
         # split the data into training 75% and testing 25%
         # X_train is the features the model is trying to find a relationship between to be trained on
         # X_test is 'unseen' so the model will use what its learnt in train to try and predict the label value for this set of data
